@@ -1,0 +1,54 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  longitude Float?
+  latitude  Float?
+  bar       Bar?     @relation(fields: [barId], references: [id])
+  barId     String?
+}
+
+model Beer {
+  id                 String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  abv                Float?
+  name               String?
+  typeField          EnumBeerTypeField?
+  beerAvailabilities BeerAvailability[]
+}
+
+model BeerAvailability {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  availability Boolean?
+  beer         Beer?    @relation(fields: [beerId], references: [id])
+  beerId       String?
+  bar          Bar?     @relation(fields: [barId], references: [id])
+  barId        String?
+}
+
+model Bar {
+  id                 String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  name               String?
+  phoneNumber        String?
+  address            String?
+  locations          Location[]
+  beerAvailabilities BeerAvailability[]
+}
+
+enum EnumBeerTypeField {
+  Option1
+}
